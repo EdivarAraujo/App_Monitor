@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
+    "android": "adb uninstall 'com.appmonitor' && react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
@@ -11,7 +11,11 @@
   },
   "dependencies": {
     "react": "17.0.2",
-    "react-native": "0.68.2"
+    "react-native": "0.68.2",
+    "react-native-countdown-component": "^2.7.1",
+    "react-native-ping": "^1.2.6",
+    "react-native-svg": "^12.3.0",
+    "react-native-vector-icons": "^9.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
