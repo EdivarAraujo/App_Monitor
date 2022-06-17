@@ -13,6 +13,8 @@
     "react": "17.0.2",
     "react-native": "0.68.2",
     "react-native-countdown-component": "^2.7.1",
+    "react-native-gesture-handler": "^2.4.2",
+    "react-native-modalize": "^2.0.13",
     "react-native-ping": "^1.2.6",
     "react-native-svg": "^12.3.0",
     "react-native-vector-icons": "^9.1.0"

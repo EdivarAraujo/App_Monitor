@@ -1,5 +1,5 @@
 import React from 'react';
-import {LogBox} from 'react-native';
+import {LogBox, StatusBar} from 'react-native';
 import {Home} from './screens';
 
 LogBox.ignoreAllLogs([
@@ -7,5 +7,10 @@ LogBox.ignoreAllLogs([
 ]);
 
 export default function index() {
-  return <Home />;
+  return (
+    <>
+      <StatusBar translucent={true} backgroundColor="#154F91" />
+      <Home />
+    </>
+  );
 }

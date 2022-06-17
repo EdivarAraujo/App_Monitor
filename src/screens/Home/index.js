@@ -2,17 +2,20 @@ import React, {useState, useEffect} from 'react';
 import {
   SafeAreaView,
   View,
-  Alert,
   FlatList,
   StyleSheet,
   Text,
   StatusBar,
   TouchableOpacity,
   Button,
+  ImageBackground,
 } from 'react-native';
 import {Svg, Line} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CountDown from 'react-native-countdown-component';
+import background from '../../assets/image/background.jpeg';
+import FabButton from '../../components/FabButton/FabButton';
+import ModalVisible from '../../components/Modal/ModalVisible';
 
 import RenderConditional from '../../components/RenderConditional';
 import ping from '../../services/ping';
@@ -21,19 +24,20 @@ const DATA = [
   {
     id: '1',
     title: 'Edivar SP',
-    ip: '192.168.1.167',
+    ip: '192.168.2.106',
   },
 ];
 
+// useEffect (fução quando renderisza os componentes)
 const Equipamento = ({equipamento, refresh}) => {
   const [isActive, setIsActive] = useState(false);
 
+  //função responsavel por pingar no equipamento
   useEffect(() => {
     ping(equipamento.ip).then(resposta => {
       setIsActive(resposta);
     });
   }, [refresh]);
-
   // Alert.alert(JSON.stringify(equipamento));
   return (
     <View style={styles.pai}>
@@ -105,38 +109,50 @@ const Home = () => {
   const onFinish = () => {
     setAtualizando(false);
   };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        data={DATA}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
-      {/* BOTÃO TIME */}
-      <TouchableOpacity
-        activeOpacity={0.8}
-        style={styles.button}
-        onPress={onChangeResetCount}>
-        <RenderConditional isTrue={atualizando}>
-          <CountDown
-            until={10}
-            timeToShow={['S']}
-            timeLabels={{s: ''}}
-            onPress={() => alert('Atualizando Aguarde...')}
-            onFinish={onFinish}
-            onChange={value => setCount(value)}
-            style={styles.count}
-            digitStyle={{color: '#003c7c'}}
-            digitTxtStyle={{color: '#FFFF'}}
+    <>
+      <SafeAreaView style={styles.container}>
+        <ImageBackground
+          style={styles.image}
+          source={background}
+          resizeMode="cover">
+          <FlatList
+            data={DATA}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
           />
-        </RenderConditional>
 
-        <RenderConditional isTrue={!atualizando}>
-          <Text style={styles.labelButton}>ATUALIZAR</Text>
-        </RenderConditional>
-      </TouchableOpacity>
-    </SafeAreaView>
+          {/* BOTÃO TIME */}
+
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={styles.button}
+            onPress={onChangeResetCount}>
+            {/* display do contador */}
+
+            <RenderConditional isTrue={atualizando}>
+              <CountDown
+                until={10}
+                timeToShow={['S']}
+                timeLabels={{s: ''}}
+                onPress={() => alert('Atualizando Aguarde...')}
+                onFinish={onFinish}
+                onChange={value => setCount(value)}
+                style={styles.count}
+                digitStyle={{color: '#003c7c'}}
+                digitTxtStyle={{color: '#FFFF'}}
+              />
+            </RenderConditional>
+
+            <RenderConditional isTrue={!atualizando}>
+              <Text style={styles.labelButton}>ATUALIZAR</Text>
+            </RenderConditional>
+          </TouchableOpacity>
+        </ImageBackground>
+      </SafeAreaView>
+      <FabButton />
+      {/* <ModalVisible /> */}
+    </>
   );
 };
 
@@ -144,6 +160,7 @@ const styles = StyleSheet.create({
   pai: {
     flex: 1,
     marginVertical: 2,
+    marginHorizontal: 4,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -157,6 +174,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     textAlign: 'center',
+    color: '#FFFFFF',
   },
   labelButton: {
     fontSize: 16,
@@ -165,7 +183,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    //backgroundColor: 'red',
+  },
+  image: {
+    flex: 1,
   },
   // CONTADOR
   button: {
@@ -180,6 +200,10 @@ const styles = StyleSheet.create({
   count: {
     backgroundColor: 'transparent',
     width: '100%',
+  },
+  option: {
+    flex: 1,
+    backgroundColor: '#fff',
   },
 });
 
