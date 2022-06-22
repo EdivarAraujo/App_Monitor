@@ -9,13 +9,14 @@ import {
   TouchableOpacity,
   Button,
   ImageBackground,
+  Modal,
 } from 'react-native';
 import {Svg, Line} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CountDown from 'react-native-countdown-component';
 import background from '../../assets/image/background.jpeg';
 import FabButton from '../../components/FabButton/FabButton';
-import ModalVisible from '../../components/Modal/ModalVisible';
+import ModalVisible from '../../components/Modal';
 
 import RenderConditional from '../../components/RenderConditional';
 import ping from '../../services/ping';
@@ -38,6 +39,7 @@ const Equipamento = ({equipamento, refresh}) => {
       setIsActive(resposta);
     });
   }, [refresh]);
+
   // Alert.alert(JSON.stringify(equipamento));
   return (
     <View style={styles.pai}>
@@ -99,6 +101,8 @@ const Equipamento = ({equipamento, refresh}) => {
 
 const Home = () => {
   const [count, setCount] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+
   const [atualizando, setAtualizando] = useState(true);
 
   const renderItem = ({item}) => (
@@ -109,8 +113,14 @@ const Home = () => {
   const onFinish = () => {
     setAtualizando(false);
   };
+
+  function isVisibleModal() {
+    setModalVisible(!modalVisible);
+  }
+
   return (
     <>
+      <ModalVisible isVisible={modalVisible} onClose={isVisibleModal} />
       <SafeAreaView style={styles.container}>
         <ImageBackground
           style={styles.image}
@@ -150,7 +160,7 @@ const Home = () => {
           </TouchableOpacity>
         </ImageBackground>
       </SafeAreaView>
-      <FabButton />
+      <FabButton isVisibleModal={isVisibleModal} />
       {/* <ModalVisible /> */}
     </>
   );

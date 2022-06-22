@@ -1,40 +1,74 @@
-import React, {useState, Component} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableWithoutFeedback,
   Animated,
   Dimensions,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import {Modalize} from 'react-native-modalize';
 
 const {width, height} = Dimensions.get('window');
 
-export default function FabButton() {
+export default function FabButton({isVisibleModal}) {
+  const [open, setOpen] = useState(false);
+  const animation = useRef(new Animated.Value(0)).current;
+
   function toggleMenu() {
-    Alert.alert('oi');
+    setOpen(true);
+    const toValue = open ? 0 : 1;
+    // console.log(toValue);
+
+    Animated.spring(animation, {
+      toValue,
+      friction: 6,
+      useNativeDriver: false,
+    }).start();
+
+    setOpen(!open);
   }
+
+  function onOpenModal() {
+    isVisibleModal();
+  }
+
+  const pinStyle = {
+    transform: [
+      {scale: animation},
+      {
+        translateY: animation.interpolate({
+          inputRange: [0, 1],
+          outputRange: [0, -20],
+          useNativeDriver: false,
+        }),
+      },
+    ],
+  };
+
+  const rotation = {
+    transform: [
+      {
+        rotate: animation.interpolate({
+          inputRange: [0, 1],
+          outputRange: ['0deg', '45deg'],
+          useNativeDriver: false,
+        }),
+      },
+    ],
+  };
 
   return (
     // CORAÇÃO DO FABBUTON(BOTÃO PRINCIPAL)
     <View style={[styles.containerpro]}>
-      <TouchableWithoutFeedback onPress={() => Alert.alert('sadasd')}>
-        <Animated.View style={[styles.button, styles.submenu]}>
-          <Icon name="heart" size={24} color="#FFF" />
-        </Animated.View>
-      </TouchableWithoutFeedback>
       {/* BOTÃO SUBMENU */}
-      <TouchableWithoutFeedback>
-        <Animated.View style={[styles.button, styles.submenu]}>
-          <Icon name="camera" size={24} color="#FFF" />
+      <TouchableWithoutFeedback onPress={onOpenModal}>
+        <Animated.View style={[styles.button, styles.submenu, pinStyle]}>
+          <Icon name="codesquareo" size={24} color="#FFF" />
         </Animated.View>
       </TouchableWithoutFeedback>
       {/* BOTÃO PRINCIPAL */}
       <TouchableWithoutFeedback onPress={toggleMenu}>
-        <Animated.View style={[styles.button, styles.menu]}>
+        <Animated.View style={[styles.button, styles.menu, rotation]}>
           <Icon name="plus" size={24} color="#FFF" />
         </Animated.View>
       </TouchableWithoutFeedback>
@@ -49,7 +83,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   button: {
-    position: 'absolute',
+    // position: 'absolute',
     backgroundColor: '#003c7c',
     width: 60,
     height: 60,
@@ -68,6 +102,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#00ff',
     },
     submenu: {
+      position: 'absolute',
       width: 30,
       height: 30,
       borderRadius: 30 / 2,
