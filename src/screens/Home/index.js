@@ -20,14 +20,7 @@ import ModalVisible from '../../components/Modal';
 
 import RenderConditional from '../../components/RenderConditional';
 import ping from '../../services/ping';
-
-const DATA = [
-  {
-    id: '1',
-    title: 'Edivar SP',
-    ip: '192.168.2.106',
-  },
-];
+import api from '../../services/api';
 
 // useEffect (fução quando renderisza os componentes)
 const Equipamento = ({equipamento, refresh}) => {
@@ -45,7 +38,7 @@ const Equipamento = ({equipamento, refresh}) => {
     <View style={styles.pai}>
       <View style={styles.filho}>
         <Text style={styles.title}>{equipamento.ip}</Text>
-        <Text style={styles.title}>{equipamento.title}</Text>
+        <Text style={styles.title}>{equipamento.label}</Text>
       </View>
       {/* svg (CODIGO  DA LINHA VERDE)*/}
       <View style={styles.filho}>
@@ -102,8 +95,21 @@ const Equipamento = ({equipamento, refresh}) => {
 const Home = () => {
   const [count, setCount] = useState();
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [data, setData] = useState([]);
   const [atualizando, setAtualizando] = useState(true);
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  async function init() {
+    await api
+      .post('estoqueExpedicao.php', {route: 'findEquipamentsCpo'})
+      .then(resposta => {
+        setData(resposta.data);
+        console.log(resposta.data);
+      });
+  }
 
   const renderItem = ({item}) => (
     <Equipamento equipamento={item} refresh={count} />
@@ -127,7 +133,7 @@ const Home = () => {
           source={background}
           resizeMode="cover">
           <FlatList
-            data={DATA}
+            data={data}
             renderItem={renderItem}
             keyExtractor={item => item.id}
           />
@@ -161,7 +167,6 @@ const Home = () => {
         </ImageBackground>
       </SafeAreaView>
       <FabButton isVisibleModal={isVisibleModal} />
-      {/* <ModalVisible /> */}
     </>
   );
 };

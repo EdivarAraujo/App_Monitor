@@ -17,7 +17,6 @@ export default function FabButton({isVisibleModal}) {
   function toggleMenu() {
     setOpen(true);
     const toValue = open ? 0 : 1;
-    // console.log(toValue);
 
     Animated.spring(animation, {
       toValue,
@@ -83,7 +82,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   button: {
-    // position: 'absolute',
     backgroundColor: '#003c7c',
     width: 60,
     height: 60,

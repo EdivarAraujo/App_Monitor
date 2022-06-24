@@ -1,0 +1,78 @@
+
+Vamos criar um botao personalizado que recebe outros componentes dentro dele como um Text por exemplo kkkk beisso
+
+
+
+Como a gente tem dois botoes aqui e necessario usar o container afim de ajustar eles na posicao que a gente quer
+
+  <TouchableOpacity>
+    {/* Aqui vai qualquer componente que a gente queira usar, no caso pode ser um icon ou um Text */}
+    </TouchableOpacity>
+    
+    Vamos usar o Text do react native mesmo
+    
+    Sempre lembra de importar de dentro da lib: Biblioteca
+    
+     <Text>Aqui vai o texto do botao</Text>,
+     
+     Agora e so estilizar o botao e o text, como os dois botoes vao ser iguais vamos criar um estilo para os dois tanto do Text como do TouchableOpacity
+     
+     
+ ## ESTILO DO BOTAO ##
+ 
+   botao:{
+    1 -alignItems: 'center',
+    2 -justifyContent: 'center',
+    3 -height:50,
+    4- width:50,
+    5 -borderRadius:10,
+    6- backgroundColor:'#003c7c'
+  }
+     
+  1- Alinhamos os filhos ao centro na vertical
+  2 - Alinhamos os filhos ao centro na Horizontal 
+  3 - Definimos uma altura fixa de 50 pixels
+  4 - Definimos uma largura fixa de 50 pixels
+  5 - Deixamos todas as bordas redondas
+  6 - Alteramos a cor de fundo
+     
+     
+  ## ESTILO DO TEXTO DENTRO DO BOTAO ##
+  
+TextoBotao: {
+   1- fontWeight: 'bold',
+   2- fontSize: 16,
+   3- textAlign: 'center',
+  } 
+     
+   1 -  Definimos a largura da fonte "ESPESSURA"  
+   2 -  Definimos o Tamanho da Fonte em escala
+   3 -  Definimos que o alinhamento dela sesra no centro
+     
+  AGORA VAMOS APLICAR O ESTILO QUE CRIAMOS EM CADA COMPONENTE  
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     

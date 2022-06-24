@@ -4,17 +4,18 @@ import {
   Modal,
   StyleSheet,
   Text,
-  Pressable,
   View,
   Button,
-  Svg,
-  Line,
   Keyboard,
+  TouchableOpacity,
 } from 'react-native';
+
+/**
+ * TouchableOpacity e como se fosse uma View, entao nao necessita uma view por fora na maioria dos casos, se tiver mais de um TouchableOpacity ai sim usa-se a View como container.
+ */
 import {TextInput} from 'react-native-gesture-handler';
 import ping from '../../services/ping';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import RenderConditional from '../RenderConditional/index';
 
 const ModalPing = ({isVisible, onClose}) => {
   const [ip, setIp] = useState('');
@@ -90,13 +91,16 @@ const ModalPing = ({isVisible, onClose}) => {
                 onChangeText={setIp}
               />
             </View>
-            {/* <Text style={{color: isActive ? 'green' : 'red'}}>
-              {`${isActive ? 'Aparelho conectado' : 'Aparelho Desconectado'}`}
-            </Text> */}
-            <View style={{borderColor: 'red'}}>{activeItem()}</View>
+
+            <View>{activeItem()}</View>
             <View style={styles.lineModal}>
-              <Button title="Fechar" onPress={onClose} />
-              <Button title="Pingar" onPress={handlerPing} />
+              <TouchableOpacity style={styles.botao} onPress={onClose}>
+                <Text style={styles.TextoBotao}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.botao} onPress={handlerPing}>
+                <Text style={styles.TextoBotao}>Pingar</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -178,6 +182,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     padding: 5,
+  },
+  botao: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
+    width: 80,
+    borderRadius: 10,
+    backgroundColor: '#003c7c',
+  },
+  TextoBotao: {
+    fontWeight: '500',
+    color: '#FFF',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 
