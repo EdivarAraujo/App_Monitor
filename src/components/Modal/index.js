@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
+  ActivityIndicator,
   Keyboard,
   TouchableOpacity,
 } from 'react-native';
@@ -16,26 +16,31 @@ import {
 import {TextInput} from 'react-native-gesture-handler';
 import ping from '../../services/ping';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import RenderConditional from '../RenderConditional';
 
 const ModalPing = ({isVisible, onClose}) => {
   const [ip, setIp] = useState('');
   const [isActive, setIsActive] = useState(false);
+  const [isAtualizando, setIsAtualizando] = useState(false);
 
   /*Funçao responsavel por pingar no ip digitado no campo textImput*/
-  function handlerPing() {
+  async function handlerPing() {
     //verifica se o campo está vazio
     if (ip == '') {
       Alert.alert('Digite um ip');
+
       return;
     }
+    setIsAtualizando(true);
     /*
     a função ping é responsavel por verificar o status de conexão do equipamento na rede,
-    ela recebe como partametro o ipaddress ex: 0.0.0.0, e retorna true ou false,
+    ela recebe como parametro o ipaddress ex: 0.0.0.0, e retorna true ou false,
     para receber um retorno da função usa-se o .then que recebe uma (resposta) => {}
      */
-    ping(ip).then(resposta => {
+    await ping(ip).then(resposta => {
       // atualiza o valor da variavel isActive para true ou false de acordo com a resposta da função ping
       setIsActive(resposta);
+      setIsAtualizando(false);
       Keyboard.dismiss();
     });
   }
@@ -89,6 +94,7 @@ const ModalPing = ({isVisible, onClose}) => {
                 value={ip}
                 placeholder="Digite um ip"
                 onChangeText={setIp}
+                color="#000"
               />
             </View>
 
@@ -99,7 +105,12 @@ const ModalPing = ({isVisible, onClose}) => {
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.botao} onPress={handlerPing}>
-                <Text style={styles.TextoBotao}>Pingar</Text>
+                <RenderConditional isTrue={!isAtualizando}>
+                  <Text style={styles.TextoBotao}>Pingar</Text>
+                </RenderConditional>
+                <RenderConditional isTrue={isAtualizando}>
+                  <ActivityIndicator size={20} color="#ffff" />
+                </RenderConditional>
               </TouchableOpacity>
             </View>
           </View>

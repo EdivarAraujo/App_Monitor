@@ -5,11 +5,8 @@ import {
   FlatList,
   StyleSheet,
   Text,
-  StatusBar,
   TouchableOpacity,
-  Button,
   ImageBackground,
-  Modal,
 } from 'react-native';
 import {Svg, Line} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -22,18 +19,36 @@ import RenderConditional from '../../components/RenderConditional';
 import ping from '../../services/ping';
 import api from '../../services/api';
 
-// useEffect (fução quando renderisza os componentes)
+// useEffect (fução quando renderiza os componentes)
 const Equipamento = ({equipamento, refresh}) => {
   const [isActive, setIsActive] = useState(false);
+  const [iconName, setIconName] = useState('printer');
 
-  //função responsavel por pingar no equipamento
+  // função responsavel por pingar no equipamento
   useEffect(() => {
+    renderIcon();
     ping(equipamento.ip).then(resposta => {
       setIsActive(resposta);
     });
   }, [refresh]);
 
-  // Alert.alert(JSON.stringify(equipamento));
+  function renderIcon() {
+    switch (equipamento.tipoEquipamento) {
+      case '1':
+        setIconName('printer');
+        break;
+      case '2':
+        setIconName('cellphone');
+        break;
+      case '3':
+        setIconName('tablet-android');
+        break;
+      default:
+        setIconName('cellphone');
+        break;
+    }
+  }
+
   return (
     <View style={styles.pai}>
       <View style={styles.filho}>
@@ -85,8 +100,8 @@ const Equipamento = ({equipamento, refresh}) => {
         </RenderConditional>
       </View>
       {/* ICONES(IMPRESSORA) */}
-      <View style={styles.filho}>
-        <Icon name="printer" size={40} color={isActive ? 'green' : 'red'} />
+      <View style={[styles.filho, {flex: 0.5}]}>
+        <Icon name={iconName} size={40} color={isActive ? 'green' : 'red'} />
       </View>
     </View>
   );
@@ -94,6 +109,7 @@ const Equipamento = ({equipamento, refresh}) => {
 
 const Home = () => {
   const [count, setCount] = useState();
+  const [segundos, setSegundos] = useState(60);
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const [atualizando, setAtualizando] = useState(true);
@@ -107,7 +123,6 @@ const Home = () => {
       .post('estoqueExpedicao.php', {route: 'findEquipamentsCpo'})
       .then(resposta => {
         setData(resposta.data);
-        console.log(resposta.data);
       });
   }
 
@@ -117,7 +132,7 @@ const Home = () => {
 
   const onChangeResetCount = () => setAtualizando(true);
   const onFinish = () => {
-    setAtualizando(false);
+    setSegundos(10), setAtualizando(false);
   };
 
   function isVisibleModal() {
@@ -148,7 +163,7 @@ const Home = () => {
 
             <RenderConditional isTrue={atualizando}>
               <CountDown
-                until={10}
+                until={segundos}
                 timeToShow={['S']}
                 timeLabels={{s: ''}}
                 onPress={() => alert('Atualizando Aguarde...')}
@@ -175,16 +190,17 @@ const styles = StyleSheet.create({
   pai: {
     flex: 1,
     marginVertical: 2,
-    marginHorizontal: 4,
+    // // marginHorizontal: 2,
     padding: 10,
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     flexDirection: 'row',
   },
   filho: {
-    flexDirection: 'column',
-    alignItems: 'center',
     flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   title: {
     fontSize: 16,
