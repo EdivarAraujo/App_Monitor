@@ -19,19 +19,24 @@ import RenderConditional from '../../components/RenderConditional';
 import ping from '../../services/ping';
 import api from '../../services/api';
 
-// useEffect (fução quando renderiza os componentes)
+// useEffect (função quando renderiza os componentes)
 const Equipamento = ({equipamento, refresh}) => {
   const [isActive, setIsActive] = useState(false);
+  const [pingando, setPingando] = useState(false);
   const [iconName, setIconName] = useState('printer');
 
   // função responsavel por pingar no equipamento
   useEffect(() => {
     renderIcon();
-    ping(equipamento.ip).then(resposta => {
-      setIsActive(resposta);
-    });
+    if (!pingando) {
+      setPingando(true);
+      ping(equipamento.ip).then(resposta => {
+        setIsActive(resposta);
+        setPingando(false);
+      });
+    }
   }, [refresh]);
-
+  //esse switch faz com que, quando buscar os equipamentos, renderize o icone de cada equipamento, se é printer(1), cellphone(2), tablet(3)
   function renderIcon() {
     switch (equipamento.tipoEquipamento) {
       case '1':
@@ -50,12 +55,13 @@ const Equipamento = ({equipamento, refresh}) => {
   }
 
   return (
+    //Caracteristas dos equipamentos renderizados na tela(nome, ip, linhas, icones)
     <View style={styles.pai}>
       <View style={styles.filho}>
         <Text style={styles.title}>{equipamento.ip}</Text>
         <Text style={styles.title}>{equipamento.label}</Text>
       </View>
-      {/* svg (CODIGO  DA LINHA VERDE)*/}
+      {/* Codigo da linha verde, apace quando o item tiver isActive(true)*/}
       <View style={styles.filho}>
         <RenderConditional isTrue={isActive}>
           <Svg height="100" width="100">
@@ -69,7 +75,7 @@ const Equipamento = ({equipamento, refresh}) => {
             />
           </Svg>
         </RenderConditional>
-        {/*CODIGO DAS LINHA VERMELHAS  */}
+        {/*Codigo da linha vermelha, é apresentado quando o iten estiver !isActive(false) */}
         <RenderConditional isTrue={!isActive}>
           <Svg height="100" width="100">
             <Line
@@ -99,17 +105,17 @@ const Equipamento = ({equipamento, refresh}) => {
           </Svg>
         </RenderConditional>
       </View>
-      {/* ICONES(IMPRESSORA) */}
+      {/* Icones que são renderizados de acordo com o equipamento que é apresentado na tela) */}
       <View style={[styles.filho, {flex: 0.5}]}>
         <Icon name={iconName} size={40} color={isActive ? 'green' : 'red'} />
       </View>
     </View>
   );
 };
-
+//A home é a segunda parte a ser renderizada logo após, ser renderizada todas as informações dos equipamentos a home é apresentada na tela
 const Home = () => {
   const [count, setCount] = useState();
-  const [segundos, setSegundos] = useState(60);
+  const [segundos, setSegundos] = useState(60); //Alterador do valor do contador, após a primeira contagem de 60s, que é assim inicia o App, passa um novo valor para as demais contagem para atualização, sendo o novo valor de 10s
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState([]);
   const [atualizando, setAtualizando] = useState(true);
@@ -118,6 +124,7 @@ const Home = () => {
     init();
   }, []);
 
+  //Função que chama todos os equipamentos da apiAdminCpo(192.168.0.10)
   async function init() {
     await api
       .post('estoqueExpedicao.php', {route: 'findEquipamentsCpo'})
@@ -131,6 +138,8 @@ const Home = () => {
   );
 
   const onChangeResetCount = () => setAtualizando(true);
+
+  //Faz a alteração do novo valor para o contador apos o primeiro acesso ao app, e tambem encerra o contador depois do app iniciado
   const onFinish = () => {
     setSegundos(10), setAtualizando(false);
   };
@@ -141,6 +150,7 @@ const Home = () => {
 
   return (
     <>
+      {/*Visualização do Modal*/}
       <ModalVisible isVisible={modalVisible} onClose={isVisibleModal} />
       <SafeAreaView style={styles.container}>
         <ImageBackground
@@ -181,7 +191,7 @@ const Home = () => {
           </TouchableOpacity>
         </ImageBackground>
       </SafeAreaView>
-      <FabButton isVisibleModal={isVisibleModal} />
+      <FabButton isVisibleModal={isVisibleModal} isAtualizando={atualizando} />
     </>
   );
 };

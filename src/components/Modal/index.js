@@ -17,11 +17,18 @@ import {TextInput} from 'react-native-gesture-handler';
 import ping from '../../services/ping';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RenderConditional from '../RenderConditional';
+import Ping from 'react-native-ping';
 
 const ModalPing = ({isVisible, onClose}) => {
   const [ip, setIp] = useState('');
   const [isActive, setIsActive] = useState(false);
   const [isAtualizando, setIsAtualizando] = useState(false);
+
+  function handleClose() {
+    onClose();
+    setIsAtualizando(false);
+    setIp('');
+  }
 
   /*Funçao responsavel por pingar no ip digitado no campo textImput*/
   async function handlerPing() {
@@ -34,15 +41,21 @@ const ModalPing = ({isVisible, onClose}) => {
     setIsAtualizando(true);
     /*
     a função ping é responsavel por verificar o status de conexão do equipamento na rede,
-    ela recebe como parametro o ipaddress ex: 0.0.0.0, e retorna true ou false,
+    ela recebe como partametro o ipaddress ex: 0.0.0.0, e retorna true ou false,
     para receber um retorno da função usa-se o .then que recebe uma (resposta) => {}
      */
-    await ping(ip).then(resposta => {
-      // atualiza o valor da variavel isActive para true ou false de acordo com a resposta da função ping
-      setIsActive(resposta);
+
+    try {
+      await Ping.start(ip, {timeout: 1000});
+      setIsActive(true);
       setIsAtualizando(false);
       Keyboard.dismiss();
-    });
+    } catch (error) {
+      console.log(error.message);
+      setIsActive(false);
+      setIsAtualizando(false);
+      Keyboard.dismiss();
+    }
   }
 
   // função que mostra na tela se o equipamento está ativo ou não
@@ -85,7 +98,7 @@ const ModalPing = ({isVisible, onClose}) => {
         animationType="slide"
         transparent={true}
         visible={isVisible}
-        onRequestClose={onClose}>
+        onRequestClose={handleClose}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={styles.input}>
@@ -100,7 +113,7 @@ const ModalPing = ({isVisible, onClose}) => {
 
             <View>{activeItem()}</View>
             <View style={styles.lineModal}>
-              <TouchableOpacity style={styles.botao} onPress={onClose}>
+              <TouchableOpacity style={styles.botao} onPress={handleClose}>
                 <Text style={styles.TextoBotao}>Cancelar</Text>
               </TouchableOpacity>
 
@@ -148,29 +161,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
   textStyle: {
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  confirmIcon: {
-    color: 'red',
-  },
+
   input: {
     width: '100%',
     borderRadius: 10,

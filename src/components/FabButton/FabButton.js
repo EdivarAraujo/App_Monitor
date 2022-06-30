@@ -1,16 +1,21 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   StyleSheet,
   TouchableWithoutFeedback,
   Animated,
-  Dimensions,
+  Alert,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-export default function FabButton({isVisibleModal}) {
+export default function FabButton({isVisibleModal, isAtualizando}) {
   const [open, setOpen] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
+
+  const showToast = () => {
+    ToastAndroid.show('Atualizando... Aguarde!', ToastAndroid.SHORT);
+  };
 
   //Ao cliclar no botão chama essa animação(toogleMenu), para apresentar o menu do botão
   function toggleMenu() {
@@ -27,6 +32,10 @@ export default function FabButton({isVisibleModal}) {
   }
 
   function onOpenModal() {
+    if (isAtualizando) {
+      showToast();
+      return;
+    }
     isVisibleModal();
   }
   //Animação para o submenu aparecer depois de apertar o menu
