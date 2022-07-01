@@ -7,6 +7,8 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
+  ToastAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import {Svg, Line} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,6 +16,7 @@ import CountDown from 'react-native-countdown-component';
 import background from '../../assets/image/background.jpeg';
 import FabButton from '../../components/FabButton/FabButton';
 import ModalVisible from '../../components/Modal';
+import {NetworkInfo} from 'react-native-network-info';
 
 import RenderConditional from '../../components/RenderConditional';
 import ping from '../../services/ping';
@@ -24,11 +27,22 @@ const Equipamento = ({equipamento, refresh}) => {
   const [isActive, setIsActive] = useState(false);
   const [pingando, setPingando] = useState(false);
   const [iconName, setIconName] = useState('printer');
+  const [ipMyEquipament, setIpMyEquipament] = useState(false);
+
+  const showToast = () => {
+    ToastAndroid.show('Atualizando... Aguarde!', ToastAndroid.SHORT);
+  };
 
   // função responsavel por pingar no equipamento
   useEffect(() => {
     renderIcon();
     if (!pingando) {
+      //Faz a verifcação do ip que está instalado o App
+      NetworkInfo.getIPV4Address().then(ipv4Address => {
+        if (ipv4Address == equipamento.ip) {
+          setIpMyEquipament(true);
+        }
+      });
       setPingando(true);
       ping(equipamento.ip).then(resposta => {
         setIsActive(resposta);
@@ -55,8 +69,15 @@ const Equipamento = ({equipamento, refresh}) => {
   }
 
   return (
-    //Caracteristas dos equipamentos renderizados na tela(nome, ip, linhas, icones)
-    <View style={styles.pai}>
+    //Caracteristas dos equipamentos renderizados na tela(nome, ip, linhas, icones), retorna os icones
+    <View
+      //Estilo da view e if nternario, em que o icone onde estiver instalado o app ira ficar verde, se não fica sem nada
+      style={[
+        styles.pai,
+        ipMyEquipament
+          ? {borderColor: 'green'}
+          : {borderColor: 'none', borderWidth: 0},
+      ]}>
       <View style={styles.filho}>
         <Text style={styles.title}>{equipamento.ip}</Text>
         <Text style={styles.title}>{equipamento.label}</Text>
@@ -112,6 +133,7 @@ const Equipamento = ({equipamento, refresh}) => {
     </View>
   );
 };
+
 //A home é a segunda parte a ser renderizada logo após, ser renderizada todas as informações dos equipamentos a home é apresentada na tela
 const Home = () => {
   const [count, setCount] = useState();
@@ -143,9 +165,36 @@ const Home = () => {
   const onFinish = () => {
     setSegundos(10), setAtualizando(false);
   };
+  //Mensagem que aparece na tela ao clicar no botão enquanto está fazendo a leittura de todos os equipamentos chamados da api
+  const showUpdating = () => {
+    ToastAndroid.show('Atualizando... Aguarde!', ToastAndroid.SHORT);
+  };
 
+  //Deixa o modal visivel ou não
   function isVisibleModal() {
     setModalVisible(!modalVisible);
+  }
+
+  //Função para enquanto estiver atualizando não deixa atualizar
+  function onChangeLoading() {
+    if (atualizando) {
+      showUpdating();
+      return;
+    }
+    isVisibleModal();
+  }
+
+  function ShowLoading() {
+    return (
+      <View style={styles.showLoading}>
+        <Text style={styles.title}>Buscando dispositivos...</Text>
+        <ActivityIndicator
+          size="large"
+          color="#FFF"
+          style={styles.activityIndicator}
+        />
+      </View>
+    );
   }
 
   return (
@@ -157,26 +206,30 @@ const Home = () => {
           style={styles.image}
           source={background}
           resizeMode="cover">
-          <FlatList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-          />
+          <RenderConditional isTrue={data.length > 0}>
+            <FlatList
+              data={data}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+            />
+          </RenderConditional>
+
+          <RenderConditional isTrue={!data.length}>
+            <ShowLoading />
+          </RenderConditional>
 
           {/* BOTÃO TIME */}
-
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.button}
             onPress={onChangeResetCount}>
             {/* display do contador */}
-
             <RenderConditional isTrue={atualizando}>
               <CountDown
                 until={segundos}
                 timeToShow={['S']}
                 timeLabels={{s: ''}}
-                onPress={() => alert('Atualizando Aguarde...')}
+                onPress={onChangeLoading}
                 onFinish={onFinish}
                 onChange={value => setCount(value)}
                 style={styles.count}
@@ -205,6 +258,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-around',
     flexDirection: 'row',
+    borderWidth: 1,
   },
   filho: {
     flex: 1,
@@ -245,6 +299,15 @@ const styles = StyleSheet.create({
   option: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  showLoading: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  activityIndicator: {
+    marginLeft: 10,
   },
 });
 

@@ -73,6 +73,7 @@ export default function FabButton({isVisibleModal, isAtualizando}) {
           <Icon name="codesquareo" size={24} color="#FFF" />
         </Animated.View>
       </TouchableWithoutFeedback>
+
       {/* BOTÃO PRINCIPAL */}
       <TouchableWithoutFeedback onPress={toggleMenu}>
         <Animated.View style={[styles.button, styles.menu, rotation]}>
