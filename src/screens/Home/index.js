@@ -205,7 +205,6 @@ const Home = () => {
   return (
     <>
       {/*Visualização do Modal*/}
-      {/*  */}
       <ModalVisible isVisible={modalVisible} onClose={isVisibleModal} />
       <SafeAreaView style={styles.container}>
         <ImageBackground
