@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Keyboard,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 
 /**
@@ -34,7 +35,7 @@ const ModalPing = ({isVisible, onClose}) => {
   async function handlerPing() {
     //verifica se o campo está vazio
     if (ip == '') {
-      Alert.alert('Digite um ip');
+      ToastAndroid.show('Digite um IP !!!', ToastAndroid.SHORT);
 
       return;
     }
