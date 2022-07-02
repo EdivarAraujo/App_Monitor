@@ -75,7 +75,12 @@ const Equipamento = ({equipamento, refresh}) => {
       style={[
         styles.pai,
         ipMyEquipament
-          ? {borderColor: 'green'}
+          ? {
+              borderColor: 'green',
+              borderRadius: 10,
+              padding: 10,
+              borderWidth: 3,
+            }
           : {borderColor: 'none', borderWidth: 0},
       ]}>
       <View style={styles.filho}>
@@ -254,7 +259,6 @@ const styles = StyleSheet.create({
   pai: {
     flex: 1,
     marginVertical: 2,
-    // // marginHorizontal: 2,
     padding: 10,
     alignItems: 'center',
     justifyContent: 'space-around',
