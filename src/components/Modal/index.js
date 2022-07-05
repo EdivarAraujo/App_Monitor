@@ -29,6 +29,7 @@ const ModalPing = ({isVisible, onClose}) => {
     onClose();
     setIsAtualizando(false);
     setIp('');
+    setIsActive(false);
   }
 
   /*Funçao responsavel por pingar no ip digitado no campo textImput*/
