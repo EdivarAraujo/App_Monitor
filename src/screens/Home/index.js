@@ -76,7 +76,7 @@ const Equipamento = ({equipamento, refresh}) => {
         styles.pai,
         ipMyEquipament
           ? {
-              borderColor: 'green',
+              borderColor: 'white',
               borderRadius: 10,
               padding: 10,
               borderWidth: 3,
