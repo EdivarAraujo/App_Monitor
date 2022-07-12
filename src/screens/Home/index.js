@@ -21,6 +21,7 @@ import {NetworkInfo} from 'react-native-network-info';
 import RenderConditional from '../../components/RenderConditional';
 import ping from '../../services/ping';
 import api from '../../services/api';
+import Modalprint from '../../components/Modalprint';
 
 // useEffect (função quando renderiza os componentes)
 const Equipamento = ({equipamento, refresh}) => {
@@ -28,6 +29,7 @@ const Equipamento = ({equipamento, refresh}) => {
   const [pingando, setPingando] = useState(false);
   const [iconName, setIconName] = useState('printer');
   const [ipMyEquipament, setIpMyEquipament] = useState(false);
+  const [abrirModal, setAbrirModal] = useState(false);
 
   const showToast = () => {
     ToastAndroid.show('Atualizando... Aguarde!', ToastAndroid.SHORT);
@@ -67,26 +69,39 @@ const Equipamento = ({equipamento, refresh}) => {
         break;
     }
   }
+  function renderBuntton() {
+    if (equipamento.tipoEquipamento == 1 && isActive ) {
+      
+        setAbrirModal(true);
+      }
+    };
+
+    function Imprimir() {
+      onclick(Imprimir)
+    };
+   
+
 
   return (
     //Caracteristas dos equipamentos renderizados na tela(nome, ip, linhas, icones), retorna os icones
-    <View
+    <TouchableOpacity
+    onPress={renderBuntton}
       //Estilo da view e if nternario, em que o icone onde estiver instalado o app ira ficar verde, se não fica sem nada
       style={[
         styles.pai,
         ipMyEquipament
-          ? {
-              borderColor: 'white',
-              borderRadius: 10,
-              padding: 10,
-              borderWidth: 3,
-            }
+          ? {borderColor: 'none', borderWidth: 0}
           : {borderColor: 'none', borderWidth: 0},
       ]}>
       <View style={styles.filho}>
         <Text style={styles.title}>{equipamento.ip}</Text>
         <Text style={styles.title}>{equipamento.label}</Text>
       </View>
+      <Modalprint
+      abrirModal={abrirModal}
+      fecharModal={() => {setAbrirModal(false) }} 
+      idPrinter={equipamento?.idEquipamento}
+      />
       {/* Codigo da linha verde, apace quando o item tiver isActive(true)*/}
       <View style={styles.filho}>
         <RenderConditional isTrue={isActive}>
@@ -135,7 +150,7 @@ const Equipamento = ({equipamento, refresh}) => {
       <View style={[styles.filho, {flex: 0.5}]}>
         <Icon name={iconName} size={40} color={isActive ? 'green' : 'red'} />
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

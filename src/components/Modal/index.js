@@ -15,7 +15,6 @@ import {
  * TouchableOpacity e como se fosse uma View, entao nao necessita uma view por fora na maioria dos casos, se tiver mais de um TouchableOpacity ai sim usa-se a View como container.
  */
 import {TextInput} from 'react-native-gesture-handler';
-import ping from '../../services/ping';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import RenderConditional from '../RenderConditional';
 import Ping from 'react-native-ping';
