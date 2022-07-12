@@ -107,6 +107,7 @@ const ModalPing = ({isVisible, onClose}) => {
                 textAlign="center"
                 value={ip}
                 placeholder="Digite um ip"
+                placeholderTextColor={'#838B83'}
                 onChangeText={setIp}
                 color="#000"
               />

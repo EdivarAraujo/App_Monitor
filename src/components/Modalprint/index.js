@@ -64,7 +64,8 @@ async function imprimir() {
                 value={text}
                 onChangeText={setText}
                 placeholder="Digite alguma coisa"
-                color="#000"
+                color="000"
+                placeholderTextColor={'#838B83'}
                 style={styles.input}
               />
       <View style={styles.quadradoB}/>
